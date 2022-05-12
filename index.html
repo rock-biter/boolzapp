@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boolzapp</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <link rel="stylesheet" href="css/app.css">
+  <!-- CDN example (unpkg) -->
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script>dayjs().format()</script>
+</head>
+<body>
+  
+  <div id="app" class="">
+    <div class="sidebar">
+
+      <div class="sidibar__header toolbar">
+        <span>
+          Beta
+        </span>
+
+        <figure class="avatar avatar--small">
+          <img src="img/avatar_io.jpeg" alt="">
+        </figure>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+
+      </div>
+
+      <div class="sidebar__search-bar">
+        <div class="input-controls">
+          <button>
+            <svg xmlns="http://www.w3.org/2000/svg" class="input-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+
+          <input type="text" v-model="search"  class="input input-search" placeholder="Cerca o inizia una nuova chat">
+        </div>
+        
+      </div>
+
+      <ul class="contacts">
+
+        <li v-for="(element,i) in contattiFiltrati" @click="selectContact(element,i)" class="contact" :class="[activeIndex === i ? 'active' : '', element.visible ? '' : 'd-none'] ">
+          <div class="contact__avatar-wrapper">
+            <figure class="avatar">
+              <img :src="element.avatar" alt="">
+            </figure>
+          </div>
+
+          <div class="contact__info">
+            <div class="contact__title-wrapper">
+              <h4 class="contact__name">{{ element.name }}</h4>
+              <span class="contact__last-access">12:02</span>
+            </div>
+           
+            <p class="contact__text">{{ getLastMessage( element ) }}</p>
+          </div>
+
+        </li>
+
+        <!-- <li class="contact active">
+          <div class="contact__avatar-wrapper">
+            <figure class="avatar">
+              <img src="img/avatar_5.jpeg" alt="">
+            </figure>
+          </div>
+
+          <div class="contact__info">
+            <div class="contact__title-wrapper">
+              <h4 class="contact__name">Mamma</h4>
+              <span class="contact__last-access">12:02</span>
+            </div>
+           
+            <p class="contact__text">ultimo messaggio...</p>
+          </div>
+
+        </li> -->
+      </ul>
+
+    </div>
+
+    <div class="chat">
+
+      <div class="chat__header toolbar">
+        <div class="contact contact--active">
+          <figure class="avatar avatar--small">
+            <img src="img/avatar_5.jpeg" alt="">
+          </figure>
+
+          <div class="active-contact__info">
+            <h3 class="contact__name">{{ contacts[activeIndex].name }}</h3>
+            <p class="contact__text">Ci sono {{ numeroMessaggi }} messaggi nella chat</p>
+          </div>
+          <!-- info contatto -->
+        </div>
+  
+        <ul class="toolbar__icon-list icon-list">
+          <li class="icon-list__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+          </li>
+
+          <li class="icon-list__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </li>
+          
+          <li class="icon-list__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </li>
+          <li class="icon-list__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </li>
+        </ul>
+
+        
+      </div>
+
+      <div class="chat__messages">
+
+        <div v-for="element in contacts[activeIndex].messages" class="message" :class="element.status">
+          {{ element.message }}
+          <span>{{ getHours( element.date ) }}</span>
+        </div>  
+
+        <!-- <div class="message sent">
+          {{ reversedMessage }} vs {{ revert( newMessage ) }}
+        </div> -->
+
+      </div>
+
+      <div class="chat__footer toolbar">
+        <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+        </svg>
+
+        <input type="text" class="input" v-model="newMessage" @keyup.enter="send( activeIndex )" placeholder="Scrivi un messaggio">
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="toolbar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        </svg>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
